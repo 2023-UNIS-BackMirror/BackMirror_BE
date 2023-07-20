@@ -27,8 +27,10 @@ public class PostController {
 
 
     @GetMapping("/type/{type}")
-    public ResponseEntity<PostListResponseDTO> getPostTypeList(@PathVariable String type) {
-        return ResponseEntity.ok(postService.getPostTypeList(type));
+    public ResponseEntity<PostListResponseDTO> getPostTypeList(
+            @PathVariable String type,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(postService.getPostTypeList(type, userDetails));
     }
 
 

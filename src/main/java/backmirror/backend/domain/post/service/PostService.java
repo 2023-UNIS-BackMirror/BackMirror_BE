@@ -17,9 +17,7 @@ import backmirror.backend.domain.post.repository.PostSpecification;
 import backmirror.backend.domain.question.domain.Question;
 import backmirror.backend.domain.question.repository.QuestionRepository;
 import backmirror.backend.domain.user.domain.User;
-import backmirror.backend.domain.user.repository.UserRepository;
 import backmirror.backend.global.config.user.UserDetails;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -32,8 +30,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PostService {
-
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final MessageRepository messageRepository;
     private final QuestionRepository questionRepository;
@@ -90,21 +86,33 @@ public class PostService {
         return messageDTO;
     }
 
-    public PostListResponseDTO getPostTypeList(String type) {
-        Specification<Post> spec = (root, query, criteriaBuilder) -> null;
-        spec = spec.and(PostSpecification.equalType(type));
 
+    public PostListResponseDTO getPostTypeList(String type, UserDetails userDetails) {
+        User user = userDetails.getUser();
+
+        Specification<Post> spec = (root, query, criteriaBuilder) -> null;
+        spec = spec.and(PostSpecification.equalUser(user));
+        spec = spec.and(PostSpecification.equalType(type));
         List<Post> postList = postRepository.findAll(spec);
+
         List<PostDTO> postDTOList = new ArrayList<>();
 
         for (Post post : postList) {
             Long postId = post.getId();
             String postType = post.getType();
+            String postMessage = post.getMessage().getContents();
 
-            List<QnADTO> qnADTOList = new ArrayList<>();
+            List<Answer> answerList = answerRepository.findByPostId(postId);
+
+            // QnA DTOs (question, answer)
+            List<QnADTO> qnaDTOList = new ArrayList<>();
+            for(Answer answer : answerList) {
+                QnADTO qnaDTO = new QnADTO(answer.getQuestion().getContents(), answer.getContents());
+                qnaDTOList.add(qnaDTO);
+            }
 
             PostDTO postDTO = new PostDTO(
-                    postId, postType, qnADTOList
+                    postId, postType, postMessage, qnaDTOList
             );
 
             postDTOList.add(postDTO);

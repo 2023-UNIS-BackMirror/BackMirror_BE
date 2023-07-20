@@ -1,6 +1,7 @@
 package backmirror.backend.domain.post.repository;
 
 import backmirror.backend.domain.post.domain.Post;
+import backmirror.backend.domain.user.domain.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -13,4 +14,5 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
 
+    List<Post> findAllByUser(User user);
 }
