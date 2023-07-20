@@ -1,5 +1,6 @@
 package backmirror.backend.domain.post.domain;
 
+import backmirror.backend.domain.message.domain.Message;
 import backmirror.backend.domain.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -28,6 +29,10 @@ public class Post {
     @NotNull
     @Column(name = "type")
     private String type;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "message_id", nullable = false)
+    private Message message;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

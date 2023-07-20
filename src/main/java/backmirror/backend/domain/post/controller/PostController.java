@@ -20,6 +20,8 @@ public class PostController {
         return "test";
     }
 
+
+
     @GetMapping("/type/{type}")
     public ResponseEntity<PostListResponseDTO> getPostTypeList(
             @PathVariable String type,

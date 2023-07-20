@@ -1,16 +1,13 @@
-package backmirror.backend.domain.question.domain;
+package backmirror.backend.domain.message.domain;
 
+import backmirror.backend.domain.post.domain.Post;
+import backmirror.backend.domain.question.domain.Question;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@Table(name = "Question")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question {
+@Table(name = "Message")
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +20,5 @@ public class Question {
     @NotNull
     @Column
     private String contents;
+
 }
