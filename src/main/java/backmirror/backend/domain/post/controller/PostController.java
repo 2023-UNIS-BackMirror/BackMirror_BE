@@ -1,6 +1,7 @@
 package backmirror.backend.domain.post.controller;
 
 import backmirror.backend.domain.message.dto.MessageDTO;
+import backmirror.backend.domain.post.dto.PostDTO;
 import backmirror.backend.domain.post.dto.request.PostSaveRequestDTO;
 import backmirror.backend.domain.post.dto.response.PostListResponseDTO;
 import backmirror.backend.domain.post.service.PostService;
@@ -23,6 +24,12 @@ public class PostController {
             @RequestBody PostSaveRequestDTO postSaveRequestDTO,
             @AuthenticationPrincipal UserDetails userDetails ) {
         return ResponseEntity.ok(postService.savePost(postSaveRequestDTO, userDetails));
+    }
+
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO> getPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getPost(postId));
     }
 
 

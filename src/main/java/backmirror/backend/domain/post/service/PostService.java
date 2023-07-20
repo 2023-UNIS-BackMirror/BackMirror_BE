@@ -87,6 +87,35 @@ public class PostService {
     }
 
 
+    private PostDTO makePostDTO(Long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+
+        Long postId = post.getId();
+        String postType = post.getType();
+        String postMessage = post.getMessage().getContents();
+
+        List<Answer> answerList = answerRepository.findByPostId(postId);
+
+        // QnA DTOs (question, answer)
+        List<QnADTO> qnaDTOList = new ArrayList<>();
+        for(Answer answer : answerList) {
+            QnADTO qnaDTO = new QnADTO(answer.getQuestion().getContents(), answer.getContents());
+            qnaDTOList.add(qnaDTO);
+        }
+
+        PostDTO postDTO = new PostDTO(
+                postId, postType, postMessage, qnaDTOList
+        );
+
+        return postDTO;
+    }
+
+
+    public PostDTO getPost(Long id) {
+        return makePostDTO(id);
+    }
+
+
     public PostListResponseDTO getPostTypeList(String type, UserDetails userDetails) {
         User user = userDetails.getUser();
 
@@ -98,23 +127,7 @@ public class PostService {
         List<PostDTO> postDTOList = new ArrayList<>();
 
         for (Post post : postList) {
-            Long postId = post.getId();
-            String postType = post.getType();
-            String postMessage = post.getMessage().getContents();
-
-            List<Answer> answerList = answerRepository.findByPostId(postId);
-
-            // QnA DTOs (question, answer)
-            List<QnADTO> qnaDTOList = new ArrayList<>();
-            for(Answer answer : answerList) {
-                QnADTO qnaDTO = new QnADTO(answer.getQuestion().getContents(), answer.getContents());
-                qnaDTOList.add(qnaDTO);
-            }
-
-            PostDTO postDTO = new PostDTO(
-                    postId, postType, postMessage, qnaDTOList
-            );
-
+            PostDTO postDTO = makePostDTO(post.getId());
             postDTOList.add(postDTO);
         }
 
