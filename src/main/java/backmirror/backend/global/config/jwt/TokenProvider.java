@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -33,8 +32,6 @@ public class TokenProvider implements InitializingBean {
 
     @Value("${jwt.secret}")
     private String secret;
-    @Value("${jwt.accesstoken-validity-in-seconds}")
-    private int accessExpirationTime;
     private Key key;
 
     @Override
@@ -56,11 +53,7 @@ public class TokenProvider implements InitializingBean {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, accessExpirationTime);  // 만료시간 1시간
-
         final Date issuedAt = new Date();
-        final Date validity = new Date(cal.getTimeInMillis());
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -68,7 +61,6 @@ public class TokenProvider implements InitializingBean {
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim("type", ACCESS_KEY)
                 .setIssuedAt(issuedAt)
-                .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
