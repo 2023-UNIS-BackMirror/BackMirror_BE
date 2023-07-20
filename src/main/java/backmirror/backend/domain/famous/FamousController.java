@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -30,7 +27,7 @@ public class FamousController {
     @Operation(summary = "유명인 실패 사례 하나 보기")
     @GetMapping("/{famousId}")
     public FamousFailResponse getFail(
-            @RequestParam(name = "famousId") Long famousId
+            @PathVariable(name = "famousId") Long famousId
     ) {
         return famousService.getFail(famousId);
     }
