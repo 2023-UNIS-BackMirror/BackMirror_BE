@@ -21,6 +21,10 @@ public class Famous {
 
     @NotNull
     @Size(max = 255)
+    private String title;
+
+    @NotNull
+    @Size(max = 255)
     private String name;
 
     @NotNull
@@ -31,7 +35,8 @@ public class Famous {
 
     // 생성자
     @Builder
-    private Famous(String name, String contents, String image) {
+    private Famous(String name, String title, String contents, String image) {
+        this.title = title;
         this.name = name;
         this.contents = contents;
         this.image = image;
@@ -39,6 +44,7 @@ public class Famous {
 
     public static Famous of() {
         return Famous.builder()
+                .title("")
                 .name("")
                 .contents("")
                 .image("")
