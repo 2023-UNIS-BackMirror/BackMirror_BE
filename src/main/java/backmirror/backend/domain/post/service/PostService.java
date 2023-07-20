@@ -6,6 +6,7 @@ import backmirror.backend.domain.answer.repository.AnswerRepository;
 import backmirror.backend.domain.message.domain.Message;
 import backmirror.backend.domain.message.dto.MessageDTO;
 import backmirror.backend.domain.message.repository.MessageRepository;
+import backmirror.backend.domain.message.repository.MessageSpecification;
 import backmirror.backend.domain.post.domain.Post;
 import backmirror.backend.domain.post.dto.PostDTO;
 import backmirror.backend.domain.post.dto.QnADTO;
@@ -17,6 +18,7 @@ import backmirror.backend.domain.question.domain.Question;
 import backmirror.backend.domain.question.repository.QuestionRepository;
 import backmirror.backend.domain.user.domain.User;
 import backmirror.backend.domain.user.repository.UserRepository;
+import backmirror.backend.global.config.user.UserDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,16 +39,26 @@ public class PostService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
+
+    private Message getRandomMessage(String type) {
+        Specification<Message> spec = (root, query, criteriaBuilder) -> null;
+        spec = spec.and(MessageSpecification.equalType(type));
+        List<Message> messageList = messageRepository.findAll(spec);
+
+        int size = messageList.size();
+        int randomIdx = (int)Math.random()*size;
+
+        return messageList.get(randomIdx);
+    }
+
+
     @Transactional
-    public MessageDTO savePost(PostSaveRequestDTO postSaveRequestDTO) {
+    public MessageDTO savePost(PostSaveRequestDTO postSaveRequestDTO, UserDetails userDetails) {
         String type = postSaveRequestDTO.getType();
         List<AnswerDTO> answerDTOList = postSaveRequestDTO.getAnswerList();
 
-        Long userId = 13L;
-        Long messageId = 1L;
-
-        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-        Message message = messageRepository.findById(messageId).orElseThrow(EntityNotFoundException::new);
+        User user = userDetails.getUser();
+        Message message = getRandomMessage(type);
 
         // Save Post
         Post post = Post.builder()
