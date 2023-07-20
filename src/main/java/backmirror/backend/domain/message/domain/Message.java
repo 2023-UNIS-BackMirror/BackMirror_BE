@@ -4,8 +4,10 @@ import backmirror.backend.domain.post.domain.Post;
 import backmirror.backend.domain.question.domain.Question;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name = "Message")
 public class Message {
 

@@ -13,9 +13,4 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
 
-    public Optional<Post> findById(Long id);
-
-    public List<Post> findAll();
-
-    public List<Post> findAllByType(@Nullable Specification<Post> specification);
 }
