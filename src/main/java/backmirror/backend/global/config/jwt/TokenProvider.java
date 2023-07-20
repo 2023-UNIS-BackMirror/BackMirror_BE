@@ -114,7 +114,7 @@ public class TokenProvider implements InitializingBean {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails adminDetails = userDetailsService.loadUserByUsername(String.valueOf(getTokenUserId(token)));
+        UserDetails adminDetails = userDetailsService.loadUserByUserId(Long.parseLong(getTokenUserId(token)));
         return new UsernamePasswordAuthenticationToken(adminDetails, token, adminDetails.getAuthorities());
     }
 }
