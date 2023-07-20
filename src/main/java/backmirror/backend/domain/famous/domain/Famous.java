@@ -1,6 +1,6 @@
-package backmirror.backend.domain.user.domain;
+package backmirror.backend.domain.famous.domain;
 
-import backmirror.backend.domain.user.dto.KakaoUserInfo;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class User {
+public class Famous {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,24 +21,27 @@ public class User {
 
     @NotNull
     @Size(max = 255)
-    @Column(unique = true)
-    private String email;
+    private String name;
 
     @NotNull
-    @Size(max = 30)
-    private String name;
+    String contents;
+
+    @Nullable
+    private String image;
 
     // 생성자
     @Builder
-    private User(String email, String name) {
-        this.email = email;
+    private Famous(String name, String contents, String image) {
         this.name = name;
+        this.contents = contents;
+        this.image = image;
     }
 
-    public static User of(KakaoUserInfo kakaoUserInfo) {
-        return User.builder()
-                .email(kakaoUserInfo.getEmail())
-                .name(kakaoUserInfo.getName())
+    public static Famous of() {
+        return Famous.builder()
+                .name("")
+                .contents("")
+                .image("")
                 .build();
     }
 }

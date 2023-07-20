@@ -1,7 +1,8 @@
 package backmirror.backend.global.config.jwt;
 
-import backmirror.backend.global.config.user.UserDetails;
+import backmirror.backend.domain.user.domain.User;
 import backmirror.backend.global.config.user.UserDetailsService;
+import backmirror.backend.global.config.user.UserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -13,30 +14,28 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-@Component
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class TokenProvider implements InitializingBean {
 
     private final UserDetailsService userDetailsService;
     private static final String AUTHORITIES_KEY = "auth";
     private static final String ACCESS_KEY = "access";
-    private static final String REFRESH_KEY = "refresh";
+
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.accesstoken-validity-in-seconds}")
     private int accessExpirationTime;
-    @Value("${jwt.refreshtoken-validity-in-seconds}")
-    private int refreshExpirationTime;
     private Key key;
-
 
     @Override
     public void afterPropertiesSet() {
@@ -46,19 +45,19 @@ public class TokenProvider implements InitializingBean {
 
     public String getAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring("Bearer ".length());
         }
-        return null;
+        return bearerToken;
     }
 
-    public String createAccessToken(Long id, Authentication authentication) {
+    public String generateJwtAccessToken(Long id, Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, accessExpirationTime);  // 만료일 하루
+        cal.add(Calendar.SECOND, accessExpirationTime);  // 만료시간 1시간
 
         final Date issuedAt = new Date();
         final Date validity = new Date(cal.getTimeInMillis());
@@ -82,11 +81,6 @@ public class TokenProvider implements InitializingBean {
                 .getBody().getSubject();
     }
 
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = (UserDetails) userDetailsService.loadUserByUsername(Long.parseLong(getTokenUserId(token)));
-        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
-    }
-
     public boolean validateAccessToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -104,15 +98,22 @@ public class TokenProvider implements InitializingBean {
         return false;
     }
 
-    public void validateRefreshToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        String typeValue = claims.get("type", String.class);
-        if (!typeValue.equals("refresh")) {
-            //throw NotRefreshToken.EXCEPTION;
-        }
+    public Authentication userAuthorizationInput(User user) {
+        UserDetails userDetails = userDetailsService.loadUserByUserId(user.getId());
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                "",
+                userDetails.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return authentication;
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails adminDetails = userDetailsService.loadUserByUserId(Long.parseLong(getTokenUserId(token)));
+        return new UsernamePasswordAuthenticationToken(adminDetails, token, adminDetails.getAuthorities());
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,23 +42,6 @@ public class WebSecurityConfig {
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
     };
 
-    private final String[] AdminPatterns = {
-            "/admin/newpassword", "/admin/logout", "admin/reissue",
-            "/applications/**", "recruitments/**", "projects/**", "activities/**", "awards/**"
-    };
-
-    private final String[] GetPermittedPatterns = {
-            "/awards/**", "recruitments/**", "projects/**", "activities/**"
-    };
-
-    private final String[] AllPermittedPattern = {
-            "/applications", "/applications/question", "/applications/document", "/applications/final",  "/test/post/**",  "/test/question/**"
-    };
-
-    private final String[] RootPatterns = {
-            "/admin/super"
-    };
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource())
@@ -69,7 +51,6 @@ public class WebSecurityConfig {
                 .exceptionHandling()
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-
 
                 .and()
                 .headers()
@@ -83,12 +64,10 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .requestMatchers(HttpMethod.GET, GetPermittedPatterns).permitAll()
-                .requestMatchers(AllPermittedPattern).permitAll()
                 .requestMatchers(SwaggerPatterns).permitAll()
-                .requestMatchers(AdminPatterns).hasAnyRole("ROOT", "ADMIN")
-                .requestMatchers(RootPatterns).hasRole("ROOT")
-                .anyRequest().permitAll()
+                .requestMatchers("/post/**", "/question/**").permitAll()
+                .requestMatchers("/oauth/kakao").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();
 

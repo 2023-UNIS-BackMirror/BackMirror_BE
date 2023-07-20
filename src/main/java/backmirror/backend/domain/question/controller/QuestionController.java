@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/test/question")
+@RequestMapping("/question")
 public class QuestionController {
 
     private final QuestionService questionService;

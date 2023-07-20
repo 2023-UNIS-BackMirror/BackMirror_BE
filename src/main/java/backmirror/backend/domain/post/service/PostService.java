@@ -42,7 +42,7 @@ public class PostService {
         String type = postSaveRequestDTO.getType();
         List<AnswerDTO> answerDTOList = postSaveRequestDTO.getAnswerList();
 
-        Long userId = 1L;
+        Long userId = 13L;
         Long messageId = 1L;
 
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);

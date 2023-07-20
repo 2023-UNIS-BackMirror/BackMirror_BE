@@ -22,9 +22,9 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI(@Value("${springdoc.version}") String springdocVersion) {
         Info info = new Info()
-                .title("CEOS WEB API")
+                .title("BACK-MIRROR WEB API")
                 .version(springdocVersion)
-                .description("CEOS WEB API 입니다.");
+                .description("BACK-MIRROR WEB API 입니다.");
 
         // JWT 설정
         String jwtSchemeName = "jwtAuth";
