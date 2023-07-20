@@ -43,23 +43,6 @@ public class WebSecurityConfig {
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
     };
 
-    private final String[] AdminPatterns = {
-            "/admin/newpassword", "/admin/logout", "admin/reissue",
-            "/applications/**", "recruitments/**", "projects/**", "activities/**", "awards/**"
-    };
-
-    private final String[] GetPermittedPatterns = {
-            "/awards/**", "recruitments/**", "projects/**", "activities/**"
-    };
-
-    private final String[] AllPermittedPattern = {
-            "/applications", "/applications/question", "/applications/document", "/applications/final"
-    };
-
-    private final String[] RootPatterns = {
-            "/admin/super"
-    };
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource())
@@ -83,11 +66,8 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .requestMatchers(HttpMethod.GET, GetPermittedPatterns).permitAll()
-                .requestMatchers(AllPermittedPattern).permitAll()
                 .requestMatchers(SwaggerPatterns).permitAll()
-                .requestMatchers(AdminPatterns).hasAnyRole("ROOT", "ADMIN")
-                .requestMatchers(RootPatterns).hasRole("ROOT")
+                .requestMatchers("/oauth/kakao").permitAll()
                 .anyRequest().permitAll()
                 .and()
                 .headers().frameOptions().disable();
