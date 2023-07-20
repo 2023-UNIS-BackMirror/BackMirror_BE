@@ -53,7 +53,7 @@ public class WebSecurityConfig {
     };
 
     private final String[] AllPermittedPattern = {
-            "/applications", "/applications/question", "/applications/document", "/applications/final"
+            "/applications", "/applications/question", "/applications/document", "/applications/final",  "/test/**"
     };
 
     private final String[] RootPatterns = {
