@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -94,6 +95,11 @@ public class PostService {
         String postType = post.getType();
         String postMessage = post.getMessage().getContents();
 
+        Date postCreatedAt = post.getCreatedAt();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd a HH:mm");
+        String postCreatedAtStr = simpleDateFormat.format(postCreatedAt);
+
+
         List<Answer> answerList = answerRepository.findByPostId(postId);
 
         // QnA DTOs (question, answer)
@@ -104,15 +110,40 @@ public class PostService {
         }
 
         PostDTO postDTO = new PostDTO(
-                postId, postType, postMessage, qnaDTOList
+                postId, postType, postMessage, postCreatedAtStr, qnaDTOList
         );
 
         return postDTO;
     }
 
 
+    private List<PostDTO> makePostDtoList(List<Post> postList) {
+        List<PostDTO> postDTOList = new ArrayList<>();
+
+        for (Post post : postList) {
+            PostDTO postDTO = makePostDTO(post.getId());
+            postDTOList.add(postDTO);
+        }
+
+        return postDTOList;
+    }
+
+
     public PostDTO getPost(Long id) {
         return makePostDTO(id);
+    }
+
+
+    public PostListResponseDTO getPostList(UserDetails userDetails) {
+        User user = userDetails.getUser();
+
+        Specification<Post> spec = (root, query, criteriaBuilder) -> null;
+        spec = spec.and(PostSpecification.equalUser(user));
+        List<Post> postList = postRepository.findAll(spec);
+
+        List<PostDTO> postDTOList = makePostDtoList(postList);
+
+        return new PostListResponseDTO("entire", postDTOList);
     }
 
 
@@ -124,12 +155,7 @@ public class PostService {
         spec = spec.and(PostSpecification.equalType(type));
         List<Post> postList = postRepository.findAll(spec);
 
-        List<PostDTO> postDTOList = new ArrayList<>();
-
-        for (Post post : postList) {
-            PostDTO postDTO = makePostDTO(post.getId());
-            postDTOList.add(postDTO);
-        }
+        List<PostDTO> postDTOList = makePostDtoList(postList);
 
         return new PostListResponseDTO(type, postDTOList);
     }

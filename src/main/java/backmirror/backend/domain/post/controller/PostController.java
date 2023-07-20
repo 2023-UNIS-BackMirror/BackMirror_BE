@@ -37,8 +37,15 @@ public class PostController {
         return ResponseEntity.ok(postService.getPost(postId));
     }
 
+    @Operation(summary = "전체 실패 목록 열람하기")
+    @GetMapping("")
+    public ResponseEntity<PostListResponseDTO> getPostList(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return ResponseEntity.ok(postService.getPostList(userDetails));
+    }
 
-    @Operation(summary = "해당 타입의 실패 목록 열람하기")
+    @Operation(summary = "특정 타입의 실패 목록 열람하기")
     @GetMapping("/type/{type}")
     public ResponseEntity<PostListResponseDTO> getPostTypeList(
             @PathVariable String type,
