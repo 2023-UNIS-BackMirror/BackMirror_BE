@@ -2,7 +2,7 @@ version: "3"
 
 services:
   backend-dev:
-    image: backmirror/backmirror-server-dev:dev
+    image: backmirror/backmirror-backend-dev:dev
     container_name: backend-dev
     hostname: backend-dev
     expose:
