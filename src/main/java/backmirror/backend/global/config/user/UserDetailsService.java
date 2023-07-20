@@ -15,12 +15,12 @@ public class UserDetailsService implements org.springframework.security.core.use
 
     @Override
     @Transactional
-    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
 
     @Transactional
-    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(Long id) throws UsernameNotFoundException {
+    public UserDetails loadUserByUserId(Long id) throws UsernameNotFoundException {
         return userRepository.findById(id)
                 .map(user -> createUser(id, user))
                 .orElseThrow(() -> new UsernameNotFoundException(id + " -> DB에서 찾을 수 없음"));
