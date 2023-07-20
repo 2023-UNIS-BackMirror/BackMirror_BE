@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class FamousFailInfoVo {
+public class FamousFailBriefInfoVo {
 
     private Long id;
     private String name;
@@ -13,15 +13,15 @@ public class FamousFailInfoVo {
     private String image;
 
     @Builder
-    private FamousFailInfoVo(Long id, String name, String contents, String image) {
+    private FamousFailBriefInfoVo(Long id, String name, String contents, String image) {
         this.id = id;
         this.name = name;
         this.contents = contents;
         this.image = image;
     }
 
-    public static FamousFailInfoVo from(Famous famous) {
-        return FamousFailInfoVo.builder()
+    public static FamousFailBriefInfoVo from(Famous famous) {
+        return FamousFailBriefInfoVo.builder()
                 .id(famous.getId())
                 .name(famous.getName())
                 .contents(famous.getContents())

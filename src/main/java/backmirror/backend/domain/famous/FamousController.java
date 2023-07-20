@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/interview")
+@RequestMapping(value = "/famous")
 @Tag(name = "Famous")
 public class FamousController {
 
