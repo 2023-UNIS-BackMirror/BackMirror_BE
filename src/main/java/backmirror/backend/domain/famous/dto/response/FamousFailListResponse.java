@@ -1,6 +1,6 @@
 package backmirror.backend.domain.famous.dto.response;
 
-import backmirror.backend.domain.famous.vo.FamousFailInfoVo;
+import backmirror.backend.domain.famous.vo.FamousFailBriefInfoVo;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,16 +9,16 @@ import java.util.List;
 @Getter
 public class FamousFailListResponse {
 
-    private List<FamousFailInfoVo> famousFailInfoVos;
+    private List<FamousFailBriefInfoVo> famousFailBriefInfoVos;
 
     @Builder
-    private FamousFailListResponse(List<FamousFailInfoVo> famousFailInfoVos) {
-        this.famousFailInfoVos = famousFailInfoVos;
+    private FamousFailListResponse(List<FamousFailBriefInfoVo> famousFailBriefInfoVos) {
+        this.famousFailBriefInfoVos = famousFailBriefInfoVos;
     }
 
-    public static FamousFailListResponse from(List<FamousFailInfoVo> famousFailInfoVos) {
+    public static FamousFailListResponse from(List<FamousFailBriefInfoVo> famousFailBriefInfoVos) {
         return FamousFailListResponse.builder()
-                .famousFailInfoVos(famousFailInfoVos)
+                .famousFailBriefInfoVos(famousFailBriefInfoVos)
                 .build();
     }
 }
