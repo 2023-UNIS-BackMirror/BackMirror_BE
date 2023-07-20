@@ -30,7 +30,6 @@ public class TokenProvider implements InitializingBean {
     private final UserDetailsService userDetailsService;
     private static final String AUTHORITIES_KEY = "auth";
     private static final String ACCESS_KEY = "access";
-    private static final String REFRESH_KEY = "refresh";
 
     @Value("${jwt.secret}")
     private String secret;
